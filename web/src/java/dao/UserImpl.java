@@ -1,0 +1,242 @@
+package dao;
+import model.Encrypt;
+import model.User;
+import model.UserManage;
+
+import java.sql.*;
+import java.util.ArrayList;
+
+/**
+ * 这是对用户相关的数据库操作的具体实现类
+ */
+public class UserImpl implements UserManage {
+
+    //检测用户名是否重名
+    @Override
+    public boolean checkName(String userName) {
+        boolean flag = false;
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+        String sql = "SELECT * FROM users WHERE userName = ?";
+        conn = DataConner.getConnection();
+        try {
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, userName);
+            rs = pst.executeQuery();
+            if (!rs.next()) {
+                flag = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        DataConner.close(rs, pst, conn);
+        return flag;
+    }
+
+
+    //添加一个新用户(如果重名返回false)
+    @Override
+    public boolean add(User user) {
+        boolean flag = false;
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+        conn = DataConner.getConnection();
+        Encrypt encrypt = new Encrypt();
+
+        //插入一个新用户
+        try {
+            String sql = "INSERT INTO users (photo,userName,password,attentions,fansNumber,weiboNumbers) VALUES (?,?,?,?,?,?)";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, user.getPhoto());
+            pst.setString(2, user.getName());
+            pst.setString(3, encrypt.EncryptPassword(user.getPassword()));
+            pst.setInt(4, user.getAttentions());
+            pst.setInt(5, user.getFansNumber());
+            pst.setInt(6, user.getWeiboNumber());
+            int resu = pst.executeUpdate();
+            if (resu == 1) {
+                flag = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        DataConner.close(rs, pst, conn);
+        return flag;
+    }
+
+
+    //登陆验证
+    @Override
+    public boolean checkLogin(String name, String password) {
+        boolean flag = false;
+        Connection conn = null;
+        ResultSet rs = null;
+        PreparedStatement pst = null;
+        String sql = "SELECT * FROM users WHERE userName = ?";
+        Encrypt encrypt = new Encrypt();
+        conn = DataConner.getConnection();
+
+        try {
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, name);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                if (encrypt.EncryptPassword(password).equals(rs)) {
+                    flag = true;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (java.lang.Exception e) {
+            e.printStackTrace();
+        } finally {
+            DataConner.close(rs, pst, conn);
+        }
+        return flag;
+    }
+
+
+    //用户信息回传
+    @Override
+    public User userMessage(String userName) {
+        User user = new User();
+        Connection conn = null;
+        ResultSet rs = null;
+        PreparedStatement pst = null;
+        String sql = "SELECT * FROM users WHERE userName = ?";
+        conn = DataConner.getConnection();
+        try {
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, userName);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                user.setPhoto(rs.getString(1));
+                user.setName(rs.getString(2));
+                user.setPassword(rs.getString(3));
+                user.setAttentions(rs.getInt(4));
+                user.setFansNumber(rs.getInt(5));
+                user.setWeiboNumber(rs.getInt(6));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        DataConner.close(rs, pst, conn);
+        return user;
+    }
+
+    //删除一个用户
+    @Override
+    public boolean delect(String userName) {
+        boolean flag = false;
+        Connection conn = null;
+        ResultSet rs = null;
+        PreparedStatement pst = null;
+        conn = DataConner.getConnection();
+        int res;
+
+        try {
+            String sql = "DELETE FROM users WHERE userName = ?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, userName);
+            res = pst.executeUpdate();
+            if (res == 1) {
+                flag = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return flag;
+    }
+
+    //用户关注数+1
+    @Override
+    public boolean likeUserAdd(String userName) {
+        boolean flag = false;
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+        int res;
+        conn = DataConner.getConnection();
+
+        try {
+            String sql = "UPDATE users SET attentions = attentions+1 WHERE userName  = ?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, userName);
+            res = pst.executeUpdate();
+            if (res == 1) {
+                flag = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        DataConner.close(rs, pst, conn);
+        return flag;
+    }
+
+
+    //用户关注数-1
+    @Override
+    public boolean likeUserDelect(String userName) {
+        boolean flag = false;
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+        int res;
+        conn = DataConner.getConnection();
+
+        try {
+            String sql = "UPDATE users SET attentions = attentions-1 WHERE userName  = ?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, userName);
+            res = pst.executeUpdate();
+            if (res == 1) {
+                flag = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        DataConner.close(rs, pst, conn);
+        return flag;
+    }
+
+    //搜索相关用户
+    @Override
+    public ArrayList<User> userFind(String userNameFind) {
+        boolean flag = false;
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+        User userLike = new User();
+
+        ArrayList<User> users = new ArrayList<>();
+        conn = DataConner.getConnection();
+
+        try {
+            String sql = "SELECT * FROM users WHERE userName LIKE  \"%\"?\"%\"  ORDER BY LENGTH(userName)";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, userNameFind);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+
+                userLike.setPhoto(rs.getString(1));
+                userLike.setName(rs.getString(2));
+                userLike.setPassword(rs.getString(3));
+                userLike.setAttentions(rs.getInt(4));
+                userLike.setFansNumber(rs.getInt(5));
+                userLike.setWeiboNumber(rs.getInt(6));
+                users.add(userLike);
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        DataConner.close(rs, pst, conn);
+        return users;
+    }
+}
+
+
+
+
