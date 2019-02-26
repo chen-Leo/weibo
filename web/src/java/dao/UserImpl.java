@@ -83,7 +83,7 @@ public class UserImpl implements UserManage {
             pst.setString(1, name);
             rs = pst.executeQuery();
             while (rs.next()) {
-                if (encrypt.EncryptPassword(password).equals(rs)) {
+                if (encrypt.EncryptPassword(password).equals(rs.getString("password"))) {
                     flag = true;
                 }
             }
@@ -101,17 +101,19 @@ public class UserImpl implements UserManage {
     //用户信息回传
     @Override
     public User userMessage(String userName) {
-        User user = new User();
+
         Connection conn = null;
         ResultSet rs = null;
         PreparedStatement pst = null;
         String sql = "SELECT * FROM users WHERE userName = ?";
         conn = DataConner.getConnection();
+        User user = new User();
         try {
             pst = conn.prepareStatement(sql);
             pst.setString(1, userName);
             rs = pst.executeQuery();
             while (rs.next()) {
+
                 user.setPhoto(rs.getString(1));
                 user.setName(rs.getString(2));
                 user.setPassword(rs.getString(3));
@@ -208,7 +210,7 @@ public class UserImpl implements UserManage {
         Connection conn = null;
         PreparedStatement pst = null;
         ResultSet rs = null;
-        User userLike = new User();
+
 
         ArrayList<User> users = new ArrayList<>();
         conn = DataConner.getConnection();
@@ -219,7 +221,7 @@ public class UserImpl implements UserManage {
             pst.setString(1, userNameFind);
             rs = pst.executeQuery();
             while (rs.next()) {
-
+                User userLike = new User();
                 userLike.setPhoto(rs.getString(1));
                 userLike.setName(rs.getString(2));
                 userLike.setPassword(rs.getString(3));
@@ -234,6 +236,31 @@ public class UserImpl implements UserManage {
         }
         DataConner.close(rs, pst, conn);
         return users;
+    }
+
+
+    //添加用户的头像
+    public boolean userPhotoAdd(String filePath,String userName){
+        boolean flag = false;
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+        int res = -1;
+        conn = DataConner.getConnection();
+        if ("".equals(filePath)) return flag;
+        try {
+            String sql = "UPDATE users SET photo = ? WHERE userName = ?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, filePath);
+            pst.setString(2, userName);
+            res = pst.executeUpdate();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        if ( res == 1 ) flag = true;
+        DataConner.close(rs, pst, conn);
+        return  flag;
     }
 }
 

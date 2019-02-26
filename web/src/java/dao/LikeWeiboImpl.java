@@ -19,9 +19,9 @@ public class LikeWeiboImpl implements LikeWeiboManage {
 
         try {
             //查找是否点过赞
-            res = FindIsLike(userName, weiboId);
+            res = findIsLike(userName, weiboId);
             if ( res == 1 ){
-                if ( AddAttentionTable(userName,weiboId) == -1) {
+                if ( addAttentionTable(userName,weiboId) == -1) {
                     return flag ;
                 }
                 else return flag = true;
@@ -96,7 +96,7 @@ public class LikeWeiboImpl implements LikeWeiboManage {
 
 
     //查询是否点赞
-    public int FindIsLike(String userName, int weiboId) {
+    public int findIsLike(String userName, int weiboId) {
 
         boolean flag = false;
         Connection conn = null;
@@ -116,9 +116,10 @@ public class LikeWeiboImpl implements LikeWeiboManage {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        DataConner.close(rs, pst, conn);
         return res;
     }
-    public int  AddAttentionTable(String userName,int weiboId){
+    public int  addAttentionTable(String userName,int weiboId){
         boolean flag = false;
         Connection conn = null;
         PreparedStatement pst = null;
@@ -135,6 +136,7 @@ public class LikeWeiboImpl implements LikeWeiboManage {
         }catch (SQLException e)  {
             e.printStackTrace();
         }
+        DataConner.close(rs, pst, conn);
         return res;
     }
 }

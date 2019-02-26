@@ -21,7 +21,8 @@ public interface UserManage {
     public  boolean likeUserDelect(String userName);
     //搜索相关用户
     public ArrayList<User> userFind(String userNameFind);
-
+    //添加用户的头像
+    public boolean userPhotoAdd(String filePath,String userName);
 
 
 }

@@ -19,7 +19,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-@WebServlet("/weibo/WeiboFindServelt")
+@WebServlet("/weibo/WeiboFindServlet")
 public class WeiboFindServelt extends HttpServlet {
 
     WeiboContentImpl weiboContentImpl;
@@ -43,6 +43,7 @@ public class WeiboFindServelt extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) {
 
         String weiboContentFind = request.getParameter("weiboContentFind");
+        response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
 
@@ -56,6 +57,26 @@ public class WeiboFindServelt extends HttpServlet {
             isBe = false;
         }
 
+        weiboTotalJsonsReturn(user, weiboTotalJsons, weiboContents, isLike, isBe, time, discussImpl, likeWeibompl);
+
+
+        JSONArray returnJsons = JSONArray.fromObject(weiboTotalJsons);
+
+        try {
+            response.getWriter().write(returnJsons.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+
+    //将ArrayList<WeiboContent>处理为封装好的 ArrayList<WeiboTotalJson>
+    static void weiboTotalJsonsReturn(User user, ArrayList<WeiboTotalJson> weiboTotalJsons,
+                                      ArrayList<WeiboContent> weiboContents,
+                                      int isLike, Boolean isBe,
+                                      DateFormat time, DiscussImpl discussImpl, LikeWeiboImpl likeWeibompl) {
         for (WeiboContent wbContent : weiboContents) {
             WeiboTotalJson wbTotalJson = new WeiboTotalJson();
             //构建一个待返回的微博json
@@ -68,18 +89,10 @@ public class WeiboFindServelt extends HttpServlet {
             wbTotalJson.setWeiboContents(discussImpl.mainToString(discussImpl.discussAll(wbContent.getWeiboId())));
             //判断用户是否点过赞
             if (isBe) {
-                isLike = likeWeibompl.FindIsLike(user.getName(), wbContent.getWeiboId());
+                isLike = likeWeibompl.findIsLike(user.getName(), wbContent.getWeiboId());
             }
             wbTotalJson.setIsLike(isLike);
             weiboTotalJsons.add(wbTotalJson);
         }
-        JSONArray returnJsons = JSONArray.fromObject(weiboTotalJsons);
-
-        try {
-            response.getWriter().write(returnJsons.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
     }
 }

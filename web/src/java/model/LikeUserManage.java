@@ -8,5 +8,5 @@ public interface LikeUserManage {
     //删除关注表
     public boolean delectLikeUser(String likeUserName);
     //查询是否关注过
-    public int FindIsLike(String userName,String likeUserName);
+    public int findIsLike(String userName,String likeUserName);
 }

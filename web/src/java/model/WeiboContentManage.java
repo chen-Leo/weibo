@@ -20,4 +20,5 @@ public interface WeiboContentManage {
 
     //返回最近的微博
     public ArrayList<WeiboContent> weiboAllRecent();
+
 }

@@ -20,9 +20,9 @@ public class LikeUserImpl implements LikeUserManage {
         //判断是关注还是取消关注
         try {
 
-            res = FindIsLike(userName, likeUserName);
+            res = findIsLike(userName, likeUserName);
             if ( res == -1 ){
-                if ( AddLikeTable(userName,likeUserName) == -1) {
+                if ( addLikeTable(userName,likeUserName) == -1) {
                     return flag ;
                 }
                 else return flag = true;
@@ -102,7 +102,7 @@ public class LikeUserImpl implements LikeUserManage {
     }
 
     //查询是否关注过
-    public int FindIsLike(String userName, String likeUserName) {
+    public int findIsLike(String userName, String likeUserName) {
 
         boolean flag = false;
         Connection conn = null;
@@ -123,11 +123,12 @@ public class LikeUserImpl implements LikeUserManage {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        DataConner.close(rs, pst, conn);
         return res;
     }
 
     //添加一个关注表
-    public int  AddLikeTable(String userName,String likeUserName){
+    public int  addLikeTable(String userName,String likeUserName){
         boolean flag = false;
         Connection conn = null;
         PreparedStatement pst = null;
@@ -144,6 +145,7 @@ public class LikeUserImpl implements LikeUserManage {
         }catch (SQLException e)  {
             e.printStackTrace();
         }
+        DataConner.close(rs, pst, conn);
        return res;
     }
 }

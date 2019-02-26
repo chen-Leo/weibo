@@ -8,5 +8,5 @@ public interface LikeWeiboManage {
     //删除点赞(微博)
     public boolean delectWeibo(int weiboId);
     //查询是否点赞
-    public int FindIsLike(String userName,int weiboId);
+    public int findIsLike(String userName,int weiboId);
 }
