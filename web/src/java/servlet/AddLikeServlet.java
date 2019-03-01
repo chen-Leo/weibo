@@ -12,7 +12,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-
+/**
+ * 该接口实现点赞功能
+ *
+ *
+ */
 
 @WebServlet("/weibo/AddLikeServlet")
 public class AddLikeServlet extends HttpServlet {
@@ -33,15 +37,14 @@ public class AddLikeServlet extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         response.setContentType("text/html;charset=UTF-8");
-        if (user == null) {
-            try {
-                response.getWriter().print("您还未登陆，请<a href='/weibo/login.html'>登陆</a>");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+
+        if (AddAttentionsServlet.isUserNULL(response, user)) return;
+
         int weiboId = Integer.parseInt(request.getParameter("weiboId"));
+
         try {
+            if(request.getParameter("weiboId") ==null) return;
+
             if (likeWeiboImpl.addLike(user.getName(), weiboId)) {
                 response.getWriter().write("成功");
             } else {

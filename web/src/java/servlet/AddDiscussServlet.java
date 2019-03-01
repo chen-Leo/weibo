@@ -12,9 +12,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.sql.SQLException;
-import java.util.Date;
 
+import java.util.Date;
+/**
+ * 该接口实现评论功能
+ *
+ *
+ */
 @WebServlet("/weibo/AddDiscussServlet")
 public class AddDiscussServlet extends HttpServlet {
 
@@ -34,18 +38,18 @@ public class AddDiscussServlet extends HttpServlet {
 
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
+        if (AddAttentionsServlet.isUserNULL(response, user)) return;
+
+        if (request.getParameter("mainDiscuss") == null){
+            return;
+        }
+
 
         int weiboId = Integer.parseInt(request.getParameter("weiboId"));
         String mainDiscuss = request.getParameter("mainDiscuss");
         response.setContentType("text/html;charset=UTF-8");
 
-        if (user == null) {
-            try {
-                response.getWriter().print("您还未登陆，请<a href='/weibo/login.html'>登陆</a>");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+
 
         Date date = new Date();//获取系统当前时间
         Discuss discuss = new Discuss(discussImpl.weiboIdMAx() + 1, weiboId, mainDiscuss, user.getName(), new java.sql.Date(date.getTime()));
@@ -59,7 +63,5 @@ public class AddDiscussServlet extends HttpServlet {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 }

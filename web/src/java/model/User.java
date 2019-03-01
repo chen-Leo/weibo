@@ -11,15 +11,17 @@ public class User {
     private int attentions;
     private int fansNumber;
     private int weiboNumber;
+    private String personalStatement;
     public User(){};
 
-    public User( String photo, String name, String password, int attentions, int fansNumber,int weiboNumber){
+    public User( String photo, String name, String password, int attentions, int fansNumber,int weiboNumber,String personalStatement){
       this.photo = photo;
       this.name = name;
       this.password = password;
       this.attentions = attentions;
       this.fansNumber = fansNumber;
       this.weiboNumber = weiboNumber;
+      this.personalStatement = personalStatement;
     }
 
     public String getName() {
@@ -68,5 +70,13 @@ public class User {
 
     public void setWeiboNumber(int weiboNumber) {
         this.weiboNumber = weiboNumber;
+    }
+
+    public String getPersonalStatement() {
+        return personalStatement;
+    }
+
+    public void setPersonalStatement(String personalStatement) {
+        this.personalStatement = personalStatement;
     }
 }

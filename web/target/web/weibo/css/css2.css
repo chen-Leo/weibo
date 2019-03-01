@@ -1,0 +1,132 @@
+html{
+    font-size: 16px;
+}
+#top{
+    position: fixed;
+    width: 100%;
+    border-top:0.125em solid #fa7d3c;
+    background-color:white;
+    top: 0;
+    left: 0;
+    box-shadow: 0 4px 0 0 #888888; 
+}
+.logo{
+    margin-left: 10%;
+}
+#searchsheet{
+    margin-top: -2%;
+    margin-left: 20%;
+}
+#input1{
+    border-radius: 0.1rem;
+    border-color: black;
+    border-width: 0.04rem;
+    box-shadow: none;
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+}
+.btn1{
+    display: inline;
+}
+#whatget{
+    position: absolute;
+    display: none;
+    background-color: #fff;
+    width: 10rem;
+    height: 10rem;
+}
+.personalsheet{
+    float: right;
+    font-size: 1rem;
+    margin-top: -1rem;
+    margin-right: 1rem;
+}
+.left30{
+    margin-left: 2em;
+    margin-top: 0.625em;
+}
+#header{
+    display: flex;
+    justify-items: center;
+}
+#uname{
+    position: absolute;
+    margin-top: 19rem;
+    margin-left: 50%;
+    color: white;
+}
+#uintroduce{
+    position: absolute;
+    margin-top: 20rem;
+    margin-left: 49%;
+    color: white;
+}
+#ti{
+    margin-left: 45.7rem;
+    width: 100px;
+    height: 100px;
+    border-radius: 50px;
+    margin-top: 6rem;
+    background-color: white;
+}
+#user_photo{
+    overflow: hidden;
+    width: 100px;
+    height: 100px;
+    border-radius: 50px;
+
+}
+#btnt{
+    position: absolute;
+    margin-left: 50%;
+    z-index: -1;
+}
+.background{
+    position: absolute;
+    margin-left: 18%;
+    margin-top: 5%;
+    z-index: -5;
+}
+.select{
+    color: black;
+    text-decoration-line: none;
+    font-size: 100%;
+}
+#user-data{
+    position: relative;
+    width: 13.6rem;
+    height: 4rem;
+    background-color: white;
+    border-radius: 0.3rem;
+    margin-left: 17rem;
+    margin-top: 10rem;
+    z-index: -1;
+}
+#biaoge2{
+    padding-top: 0.5rem;
+    padding-left: 3rem;
+    padding-right: 0.5rem;
+} 
+#biaoge3{
+    padding-top: 0.5rem;
+    padding-left: 3rem;
+    padding-right: 0.5rem;
+}
+#personal_profile{
+    position: relative;
+    margin-top: 2rem;
+    margin-left: 17rem;
+    width: 6rem;
+}
+#weibo_content{
+    position: relative;
+    margin-top: 1rem;
+    margin-left: 45rem;
+}
+#guanzhu{
+    position: relative;
+    margin-top: 14rem;
+    margin-left: -5rem;
+    width: 5rem;
+    height: 2rem;;
+}

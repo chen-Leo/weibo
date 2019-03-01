@@ -12,6 +12,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Date;
+/**
+ * 该接口实现发微博功能
+ *
+ *
+ */
+
+
 
 @WebServlet("/weibo/AddWeiboServlet")
 public class AddWeiboServlet extends HttpServlet {
@@ -34,19 +41,14 @@ public class AddWeiboServlet extends HttpServlet {
         User user = (User) session.getAttribute("user");
         response.setContentType("text/html;charset=UTF-8");
         String mainContent = request.getParameter("mainContent");
-
-        if (user == null) {
-            try {
-                response.getWriter().print("您还未登陆，请<a href='/weibo/login.html'>登陆</a>");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        if (AddAttentionsServlet.isUserNULL(response, user)) return;
+        if (mainContent == null) return;
 
         Date date = new Date();//获取系统当前时间
         WeiboContent weiboContent = new WeiboContent(weiboContentImpl.weiboIdMAx() + 1, 0, null, mainContent, user.getName(), new java.sql.Date(date.getTime()));
 
         try {
+
             if (weiboContentImpl.add(weiboContent))
                 response.getWriter().write("加入成功");
             else

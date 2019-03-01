@@ -12,6 +12,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * 该接口实现返回用户信息功能
+ *
+ *
+ */
+
 @WebServlet("/weibo/UserMessageServelt")
 public class UserMessageServelt extends HttpServlet {
 
@@ -30,15 +36,10 @@ public class UserMessageServelt extends HttpServlet {
 
         String userName = request.getParameter("username");
         response.setContentType("text/html;charset=UTF-8");
+
         //构建一个返回的用户json格式
-
         UserJson userJson =  new UserJson();
-        userJson.setPhoto(userImpl.userMessage(userName).getPhoto());
-        userJson.setName(userImpl.userMessage(userName).getName());
-        userJson.setAttentions(userImpl.userMessage(userName).getAttentions());
-        userJson.setFansNumber(userImpl.userMessage(userName).getFansNumber());
-        userJson.setWeiboNumber(userImpl.userMessage(userName).getWeiboNumber());
-
+        userJson.ToUserJson(userImpl.userMessage(userName),userJson);
         JSONObject returnUser = JSONObject.fromObject(userJson);
 
         try {

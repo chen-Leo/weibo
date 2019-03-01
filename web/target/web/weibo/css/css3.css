@@ -1,0 +1,48 @@
+html{
+    font-size: 16px;
+}
+#top{
+    position: fixed;
+    width: 100%;
+    border-top:0.125em solid #fa7d3c;
+    background-color:white;
+    top: 0;
+    left: 0;
+    box-shadow: 0 4px 0 0 #888888; 
+}
+.logo{
+    margin-left: 10%;
+}
+.searchsheet{
+    margin-top: -2%;
+    margin-left: 20%;
+}
+.left30{
+    margin-left: 2em;
+    margin-top: 0.625em;
+}
+.personalsheet{
+    float: right;
+    font-size: 1rem;
+    margin-top: -1rem;
+    margin-right: 1rem;
+}
+.select{
+    color: black;
+    text-decoration-line: none;
+    font-size: 100%;
+}
+.input1{
+    border-radius: 0.1rem;
+    border-color: black;
+    border-width: 0.04rem;
+    box-shadow: none;
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+}
+#weibo_content{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+}

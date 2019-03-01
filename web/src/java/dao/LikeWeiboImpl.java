@@ -20,11 +20,11 @@ public class LikeWeiboImpl implements LikeWeiboManage {
         try {
             //查找是否点过赞
             res = findIsLike(userName, weiboId);
-            if ( res == 1 ){
-                if ( addAttentionTable(userName,weiboId) == -1) {
+            if ( res == -1 ){
+                if ( addLikeTable(userName,weiboId) == -1) {
                     return flag ;
                 }
-                else return flag = true;
+                else return true;
             }
             else if (res == 0) {
                 sql = "UPDATE  like_weibo SET isLike = 1 WHERE userName = ? AND weiboId = ?";
@@ -111,15 +111,44 @@ public class LikeWeiboImpl implements LikeWeiboManage {
             pst.setString(1, userName);
             pst.setInt(2, weiboId);
             rs = pst.executeQuery();
-            if (rs.next()) res = rs.getInt(1);
-            else res = 0;
+            if (rs.next()) {
+                res = rs.getInt(1);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         DataConner.close(rs, pst, conn);
         return res;
     }
-    public int  addAttentionTable(String userName,int weiboId){
+
+
+//新加点赞表
+    public int  addLikeTable(String userName,int weiboId){
+        boolean flag = false;
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+        conn = DataConner.getConnection();
+        int res = -1;
+        try {
+            String sql = "INSERT INTO like_weibo (userName,weiboId,isLike) VALUES (?,?,1)";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1,userName);
+            pst.setInt(2,weiboId);
+            res = pst.executeUpdate();
+            if(res == 1) flag =true;
+        }catch (SQLException e)  {
+            e.printStackTrace();
+        }
+        DataConner.close(rs, pst, conn);
+        return res;
+    }
+
+
+
+
+    //更改点赞表的用户名
+    public boolean userNameChange (String userNewName ,String userOriginName){
         boolean flag = false;
         Connection conn = null;
         PreparedStatement pst = null;
@@ -128,15 +157,36 @@ public class LikeWeiboImpl implements LikeWeiboManage {
         int res = -1;
 
         try {
-            String sql = "INSERT INTO like_weibo (userName,weiboId) VALUES (?,?)";
+            String sql = "UPDATE like_weibo SET userName = ? WHERE userName = ?";
             pst = conn.prepareStatement(sql);
-            pst.setString(1,userName);
-            pst.setInt(1,weiboId);
+            pst.setString(1, userNewName);
+            pst.setString(2, userOriginName);
             res = pst.executeUpdate();
-        }catch (SQLException e)  {
+            if (res == 1) flag = true;
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-        DataConner.close(rs, pst, conn);
-        return res;
+
+        return  flag;
+    }
+
+    //判断点赞表中是否有该用户
+    public boolean isUserExist(String userName) {
+        boolean flag = false;
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+        conn = DataConner.getConnection();
+        int res = -1;
+        try {
+            String sql = "SELECT * FROM  like_weibo WHERE userName  = ?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, userName);
+            rs = pst.executeQuery();
+            if (rs.next()) flag = true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return flag;
     }
 }

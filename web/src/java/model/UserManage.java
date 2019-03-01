@@ -23,6 +23,9 @@ public interface UserManage {
     public ArrayList<User> userFind(String userNameFind);
     //添加用户的头像
     public boolean userPhotoAdd(String filePath,String userName);
-
+    //更改用户姓名
+    public  boolean userNameChange(String userNewName,String userOriginName);
+    //更改用户的个人简介
+    public boolean perStatementUpdate(String userName,String perStatement);
 
 }

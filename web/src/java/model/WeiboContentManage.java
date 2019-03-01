@@ -7,7 +7,7 @@ public interface WeiboContentManage {
     public boolean add(WeiboContent weibo);
 
     //基于某一用户所发的所有微博的深度排序
-    public ArrayList<WeiboContent> weiboAll(User user);
+    public ArrayList<WeiboContent> weiboAll(String userName);
 
     //微博搜索
     public ArrayList<WeiboContent> weiboSearch(String keywords);
@@ -20,5 +20,7 @@ public interface WeiboContentManage {
 
     //返回最近的微博
     public ArrayList<WeiboContent> weiboAllRecent();
+    //判断该微博是不是用户本人所属
+    public boolean isMaster(String userName,int weiboId);
 
 }

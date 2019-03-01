@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>注册</title>
+</head>
+<body>
+<form action="">
+    <label>请输入账号：<input id = "username" type="txet" value="" ></label>
+    <label>请输入密码：<input id = "password1" type="password" value="" ></label>
+    <label>再次输入密码：<input oninput="check()" id ="password2" type="password" value="" ><span id="warn" ></span></label>
+    <input onclick="btn1()" class = "btn" type="submit" value="提交" >
+</form>
+<script type="text/javascript">
+    var username = document.getElementById("username");
+	var password1 = document.getElementById("password1");
+    var password2 = document.getElementById("password2");
+    function check(){
+        if(password1.value !== password2.value){
+            var warn = document.getElementById("warn");
+            warn.innerHTML = "两次输入密码不同" ;
+            warn.style.color = "red";
+        }
+    }
+    function btn1(){
+        if(username.value == ""){
+            alert("请输入账号");
+        }else if(password1.value == ""){
+            alert("请输入密码");
+        }else if(password2.value == ""){
+            alert("请输入密码");
+        }else if(password1.value !==password2.value){
+            alert("两次输入密码不一致");
+        }else{
+            document.forms[1].submit()
+        }
+    }
+    
+</script>
+</body>
+</html>

@@ -47,7 +47,7 @@ public class UserImpl implements UserManage {
 
         //插入一个新用户
         try {
-            String sql = "INSERT INTO users (photo,userName,password,attentions,fansNumber,weiboNumbers) VALUES (?,?,?,?,?,?)";
+            String sql = "INSERT INTO users (photo,userName,password,attentions,fansNumber,weiboNumbers,personalStatement) VALUES (?,?,?,?,?,?,?)";
             pst = conn.prepareStatement(sql);
             pst.setString(1, user.getPhoto());
             pst.setString(2, user.getName());
@@ -55,6 +55,7 @@ public class UserImpl implements UserManage {
             pst.setInt(4, user.getAttentions());
             pst.setInt(5, user.getFansNumber());
             pst.setInt(6, user.getWeiboNumber());
+            pst.setString(7,user.getPersonalStatement());
             int resu = pst.executeUpdate();
             if (resu == 1) {
                 flag = true;
@@ -120,6 +121,7 @@ public class UserImpl implements UserManage {
                 user.setAttentions(rs.getInt(4));
                 user.setFansNumber(rs.getInt(5));
                 user.setWeiboNumber(rs.getInt(6));
+                user.setPersonalStatement(rs.getString(7));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -149,6 +151,7 @@ public class UserImpl implements UserManage {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        DataConner.close(rs, pst, conn);
         return flag;
     }
 
@@ -205,6 +208,7 @@ public class UserImpl implements UserManage {
 
     //搜索相关用户
     @Override
+
     public ArrayList<User> userFind(String userNameFind) {
         boolean flag = false;
         Connection conn = null;
@@ -228,6 +232,7 @@ public class UserImpl implements UserManage {
                 userLike.setAttentions(rs.getInt(4));
                 userLike.setFansNumber(rs.getInt(5));
                 userLike.setWeiboNumber(rs.getInt(6));
+                userLike.setPersonalStatement(rs.getString(7));
                 users.add(userLike);
 
             }
@@ -261,6 +266,57 @@ public class UserImpl implements UserManage {
         if ( res == 1 ) flag = true;
         DataConner.close(rs, pst, conn);
         return  flag;
+    }
+
+    //更改用户姓名
+    public  boolean userNameChange(String userNewName,String userOriginName){
+        boolean flag = false;
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+        int res = -1;
+        conn = DataConner.getConnection();
+
+        try {
+            String sql = "UPDATE users SET userName = ? WHERE userName = ?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, userNewName);
+            pst.setString(2, userOriginName);
+            res = pst.executeUpdate();
+            if (res == 1) flag =  true;
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        DataConner.close(rs, pst, conn);
+         return  flag;
+    }
+
+
+    //更改用户的个人简介
+    public boolean perStatementUpdate(String userName,String perStatement){
+        boolean flag = false;
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+        int res = -1;
+        conn = DataConner.getConnection();
+
+        try {
+            String sql = "UPDATE users SET personalStatement = ? WHERE userName = ?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, perStatement);
+            pst.setString(2, userName);
+
+            res = pst.executeUpdate();
+            if (res == 1) {
+                flag = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        DataConner.close(rs, pst, conn);
+        return  flag;
+
     }
 }
 

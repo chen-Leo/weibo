@@ -22,10 +22,10 @@ public class LikeUserImpl implements LikeUserManage {
 
             res = findIsLike(userName, likeUserName);
             if ( res == -1 ){
-                if ( addLikeTable(userName,likeUserName) == -1) {
-                    return flag ;
+                if ( addAttentionTable(userName,likeUserName)) {
+                    return true;
                 }
-                else return flag = true;
+                else return flag;
             }
             else if (res == 0) {
                 sql = "UPDATE  like_user SET isLike = 1 WHERE userName = ? AND likeUserName = ?";
@@ -119,7 +119,6 @@ public class LikeUserImpl implements LikeUserManage {
             rs = pst.executeQuery();
             //如果结果不为空
             if (rs.next()) res = rs.getInt(1);
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -128,7 +127,7 @@ public class LikeUserImpl implements LikeUserManage {
     }
 
     //添加一个关注表
-    public int  addLikeTable(String userName,String likeUserName){
+    public boolean  addAttentionTable(String userName,String likeUserName){
         boolean flag = false;
         Connection conn = null;
         PreparedStatement pst = null;
@@ -137,15 +136,118 @@ public class LikeUserImpl implements LikeUserManage {
         int res = -1;
 
         try {
-            String sql = "INSERT INTO like_user (userName,likeUserName) VALUES (?,?)";
+            String sql = "INSERT INTO like_user (userName,likeUserName,isLike) VALUES (?,?,1)";
             pst = conn.prepareStatement(sql);
             pst.setString(1,userName);
             pst.setString(2,likeUserName);
             res = pst.executeUpdate();
+            if (res == 1) flag =true;
         }catch (SQLException e)  {
             e.printStackTrace();
         }
         DataConner.close(rs, pst, conn);
-       return res;
+       return flag;
     }
+
+
+
+    //判断用户表中是否有该用户关注了他人
+    public boolean isUserExist(String userName) {
+        boolean flag = false;
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+        conn = DataConner.getConnection();
+        int res = -1;
+
+        try {
+            String sql = "SELECT * FROM  like_user WHERE userName  = ?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, userName);
+            rs = pst.executeQuery();
+            if (rs.next()) {
+                flag = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        DataConner.close(rs, pst, conn);
+        return flag;
+    }
+
+    //判断用户表中是否有该用户被关注
+    public boolean isLikeUserExist(String userLikeName){
+        boolean flag = false;
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+        conn = DataConner.getConnection();
+        int res = -1;
+
+        try {
+            String sql = "SELECT  * FROM  like_user WHERE likeUserName  = ?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, userLikeName);
+            rs = pst.executeQuery();
+            if (rs.next()) {
+                flag = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        DataConner.close(rs, pst, conn);
+        return flag;
+    }
+
+
+    //更改关注表中用户的姓名
+    public boolean userNameChange(String userNewName, String userOriginName) {
+        boolean flag = false;
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+        conn = DataConner.getConnection();
+
+        int res = -1;
+        try {
+            String sql = "UPDATE like_user SET userName = ? WHERE userName = ?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, userNewName);
+            pst.setString(2, userOriginName);
+            res = pst.executeUpdate();
+            if (res >= 0) {
+                flag = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return flag;
+    }
+
+    //更改关注表中被关注用户的姓名
+    public boolean likeUserNameChange(String userNewName ,String userOriginName){
+
+        boolean flag = false;
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+        conn = DataConner.getConnection();
+
+        int res = -1;
+        try {
+            String sql = "UPDATE like_user SET likeUserName = ? WHERE likeUserName = ?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, userNewName);
+            pst.setString(2, userOriginName);
+            res = pst.executeUpdate();
+            if (res >= 0) {
+                flag = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return flag;
+    }
+
+
 }

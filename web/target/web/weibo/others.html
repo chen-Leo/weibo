@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" name="viewport" content="initial-scale=1,maximum-scale=1,minimum-scale=1" >
+    <title>他人主页</title>
+    <link rel="stylesheet" type="text/css" href="css\css2.css" >
+    <!-- <script type="text/javascript">
+        document.documentElement.style.fontSize = document.documentElement.clientWidth / 640*100 +"px";
+    </script> -->
+    
+</head>
+<body background="css\body_bg_page.jpg"  >
+<div id="top" >
+    <span class="logo" ><img src="css\logo.png" ></span> 
+    <div id="searchsheet" >
+        <input id="input1" onclick="tolog()" type="text" name="search-value" >
+        <div id="whatget" ></div>
+        <button class="btn1" onclick="tolog()" type="submit">搜索用户</button>
+    </div>
+    <span class="personalsheet" >
+        <span class="sheetleft" >
+            <span class="left30" ><a class="select" href="#" >我的主页</a></span>
+            <span id="left31" ><a id="select"></a></span>
+        </span>
+    </span>
+</div>
+<div id="header" >
+    <div class="background" >
+        <img src="css\029.jpg" >
+    </div>
+    <div id="ti" >
+        <img id="user_photo" >
+    </div>
+    <div id="touxiang" ></div>
+    <button id="guanzhu">关注</button>
+    <div id="uname" >xisngm</div>
+    <div id="uintroduce" >something</div>
+</div>
+<div id="user-data" >
+    <table class="biaoge" >
+        <tr>
+            <th id="biaoge1" >关注</th>
+            <th id="biaoge2" >粉丝</th>
+            <th id="biaoge3" >微博</th>
+        </tr>
+    </table>
+</div>
+<br>
+<div id="weibo_content" ></div>
+
+<script type="text/javascript" >
+
+    let boom = localStorage.getItem("name2");
+    var xhr = new XMLHttpRequest();
+    xhr.open("post","/weibo/userWeiboServlet",true);
+    xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+    xhr.send("username="+boom);
+
+    xhr.open("get","/weibo/userWeiboServlet",true)
+    xhr.send();
+    xhr.onreadystatechange = function(){
+        if(xhr.readyState==4){
+            if((xhr.status>=200&&xhr.status<300)||xhr.status ==304){
+                if(xhr.responseText!=""||xhr.responseText!=null){
+                    let shuju = xhr.responseText;
+                    let data = JSON.parse(shuju);
+                    var userphoto = document.getElementById("user_photo");
+                    if(data.photo!==null){
+                        document.getElementById("user_photo").setAttribute("src",data.photo);
+                    }
+                    var username = document.getElementById("select");
+                    username.innerHTML = data.userName;
+                    username.herf = "#";
+                    var number1 = document.createElement("p");
+                    number1.innerHTML = data.attentions;
+                    biaoge1.appendChild(number1);
+                    var number2 = document.createElement("p");
+                    number2.innerHTML = data.fansNumber;
+                    biaoge2.appendChild(number2);
+                    var number3 = document.createElement("p");
+                    number3.innerHTML = data.weiboNumber;
+                    biaoge3.appendChild(number3);
+                    var allweibonumber = data.weiboContent;
+                    var i = allweibonumber.length;
+                    for( b=0 ; b<i ; b++ ){
+                        let recieving_weiobo = allweibonumber[b].weiboMain;
+                        let addone = document.createElement("div");
+                        let zhengwen = document.createElement("xxx");
+                        let pinglunarea = document.createElement("form");
+                        pinglunarea.setAttribute("action","http://localhost:8080//weibo/AddDiscussServlet");
+                        pinglunarea.setAttribute("method","post");
+                        let pingluninput = document.createElement("input");
+                        pingluninput.setAttribute("type","text");
+                        pingluninput.style.width = "20rem";
+
+                        let shijian = document.createElement("p");
+                        shijian.setAttribute("id","sendingtime");
+                        shijian.style.fontSize = "0.5rem";
+                        shijian.innerHTML = data.weiboContent[b].weiboTime;
+
+                        let zan = document.createElement("button");
+                        zan.setAttribute("id",b+"zan");
+                        zan.setAttribute("onclick","dianzan(this)");
+                        zan.innerHTML = data.weiboContent[b].weiboLIkes+"赞";
+                        zan.style.color = "white";
+                        zan.style.fontSize = "1rem";
+                        zan.style.outline = "none";
+                        zan.style.borderRadius = "0.1rem";
+                        zan.style.cursor = "pointer";
+                        zan.style.background = "#5599FF";
+                        zan.style.borderWidth = "0";
+
+                        let subbtn = document.createElement("input");
+                        subbtn.setAttribute("type","button");
+                        subbtn.setAttribute("value","发表");
+                        subbtn.setAttribute("onclick","sendingpinglun(this)");
+                        subbtn.setAttribute("id",data.weiboContent[b].weiboId);
+                        pinglunarea.setAttribute("id",data.weiboContent[b].weiboId+"carea");
+                        zhengwen.setAttribute("id","main");
+                        zhengwen.setAttribute("attr",data.weiboContent[b].weiboId);
+                        addone.setAttribute("id","every");
+                        zhengwen.innerHTML = recieving_weiobo ;
+                        let kids = weibo_content.children ;
+                        if (kids.length == null)
+                        {
+                            weibo_content.appendChild(zhengwen);
+                            zhengwen.appendChild(shijian);
+                            zhengwen.appendChild(zan);
+                            zhengwen.appendChild(pinglunarea);
+                            pinglunarea.appendChild(pingluninput);
+                            pinglunarea.appendChild(subbtn);
+                        }
+                        else
+                        {
+                            weibo_content.insertBefore(zhengwen,weibo_content.firstChild);
+                            zhengwen.appendChild(zan);
+                            zhengwen.appendChild(shijian);
+                            zhengwen.appendChild(pinglunarea);
+                            pinglunarea.appendChild(pingluninput);
+                            zhengwen.appendChild(subbtn);
+                        }
+                        document.getElementById("main").style.fontSize = "1.5rem";
+                        document.getElementById("main").style.marginBottom = "5rem";
+                        for(k=0;k<data.weiboContent[b].weiboComent.length;k++){
+                            let pinglun = document.createElement("p");
+                            pinglun.innerHTML = data.weiboContent[b].weiboComent[k];
+                            pinglun.style.fontSize = "1rem";
+                            zhengwen.appendChild(pinglun);
+                            // every.insertBefore(pinglun,every.firstChild);
+                            
+                        }
+                    }
+                        }else{
+                    alert("暂无数据")
+                    }
+                }else{
+                    alert("暂无数据")
+                }
+            }
+    }
+    
+
+</script>
+
+<script type="text/javascript"> // 发送评论
+    function sendingpinglun(obj){
+        var xhr = new XMLHttpRequest();
+        xhr.open("post","/weibo/AddDiscussServlet",true);
+        xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+        xhr.send("weiboId="+obj.id);
+
+        xhr.open("get","/weibo/AddDiscussServlet",true);
+        xhr.send();
+        // alert(obj.id)
+        xhr.onreadystatechange = function(){
+        if(xhr.readyState == 4){
+            if((xhr.status>=200&&xhr.status<300)||xhr.status == 304){
+                if(xhr.responseText=="您还未登陆,请登陆"){
+                    alert("您还未登陆,请登陆")
+                    self.location.herf = "login&register.html";
+                }else if(xhr.responseText=="评论失败"){
+                    alert("评论失败")
+                }else if(xhr.responseText=="评论成功"){
+                    let data = document.getElementById(obj.id).parentNode.children[2].children[0].value;
+                    let pinglun = document.createElement("p");
+                    pinglun.innerHTML = document.cookie.userName +"："+ data ;
+                    pinglun.style.fontSize = "1rem";
+                    let parent = document.getElementById(obj.id).parentNode;
+                    if(parent.lastChild == parent.children[3]){
+                        parent.appendChild(pinglun)
+                    }
+                    else
+                    {
+                        parent.insertBefore(pinglun,parent.children[4])
+                    }
+                }
+
+            }
+        }
+    }
+    }
+</script>
+
+<script type="text/javascript" > // 点赞
+    function dianzan(obj){
+        var g1 = parseInt(obj.id)
+        // alert(obj.id)
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("post","/weibo/AddLikeServlet",true);
+        xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+        xhr.send("weiboId="+g1);
+
+        xhr.open("get","/weibo/AddLikeServlet",true);
+        xhr.send();
+        xhr.onreadystatechange = function (){
+            if(xhr.readyState == 4){
+                if((xhr.status>=200&&xhr.status<300)||xhr.status == 304){
+                    if(xhr.responseText=="您还未登陆,请登陆"){
+                        alert("您还未登陆,请登陆");
+                        self.location.herf = "login&register.html";
+                    }else if(xhr.responseText=="失败"){
+                        alert("点赞失败")
+                    }else if(xhr.responseText=="成功"){
+                        if(document.getElementById(obj.id).style.color == "white" ){
+                        if(parseInt(document.getElementById(obj.id).innerHTML == NaN)){
+                            let t = 0;
+                            t++;
+                            document.getElementById(obj.id).style.color = "red";
+                            document.getElementById(obj.id).innerHTML = t+"赞";
+                        }else{
+                            let t = parseInt(document.getElementById(obj.id).innerHTML);
+                            t++;
+                            document.getElementById(obj.id).style.color = "red";
+                            document.getElementById(obj.id).innerHTML = t+"赞";
+
+                        }
+                        }else{
+                            let t = parseInt(document.getElementById(obj.id).innerHTML);
+                            t--;
+                            document.getElementById(obj.id).style.color = "white";
+                            document.getElementById(obj.id).innerHTML = t+"赞";
+                            }
+                    }
+                }
+            }
+        }
+    }
+</script>
+
+<script type="text/javascript" > //关注
+    document.getElementById("guanzhu").onclick = function(){
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("post","/weibo/AddAttentionsServlet",true);
+        xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+        xhr.send("userLikeName="+localStorage.getItem("name2"));
+
+        xhr.open("get","/weibo/AddAttentionsServlet",true);
+        xhr.send();
+        xhr.onreadystatechange = function(){
+            if(xhr.readyState==4){
+                if((xhr.status>=200&&xhr.status<300)||xhr.status ==304){
+                    if(xhr.responseText=="失败"){
+                        alert("关注失败")
+                    }else if(xhr.responseText=="您还未登陆,请登陆"){
+                        alert("您还未登陆,请登陆")
+                        self.location.herf = "login&register.html"
+                    }else if(xhr.responseText=="成功"){
+                        if(document.getElementById("guanzhu").innerHTML == "关注"){
+                            var xhr = new XMLHttpRequest ;
+                            xhr.open("post","/weibo/AddAttentionsServlet",true);
+                            xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+                            xhr.send();
+                            let a = document.getElementById("biaoge2").innerHTML;
+                            document.getElementById("biaoge2").innerHTML = a+1;
+                            document.getElementById("guanzhu").innerHTML = "取消关注";
+                        }
+                        else{
+                            var xhr = new XMLHttpRequest ;
+                            xhr.open("post","/weibo/AddAttentionsServlet",true);
+                            xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+                            xhr.send();
+
+                            let a = document.getElementById("biaoge2").innerHTML;
+                            document.getElementById("biaoge2").innerHTML = a-1;
+                            document.getElementById("guanzhu").innerHTML = "关注";
+                        }
+                    }                        
+                }
+            }
+        }
+    }
+</script>
+<script type="text/javascript"> //搜索
+
+    document.getElementById("input1").oninput = function(){
+    
+        var xhr = new XMLHttpRequest();
+        xhr.open("post","/weibo/UserFindServlet",true);
+        xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+        xhr.send("username="+document.getElementById("input1").value);
+    
+        xhr.open("get","/weibo/UserFindServlet",true);
+        xhr.send();
+        xhr.onreadystatechange = function(){
+            if(xhr.readyState==4){
+                if((xhr.status>=200&&xhr.status<300)||xhr.status==304){
+                    if(xhr.responseText!=""||xhr.responseText!=null){
+                        let result = JSON.parse(xhr.responseText);
+                        let aul = document.createElement("ul");
+                        let ali = document.createElement("li");
+                        let alia = document.createElement("a");
+                        ali.setAttribute("type","none");
+    
+                        for(o=0;0<result.length;o++){
+                            alia.innerHTML = result[o].name;
+                            if(document.getElementById("whatget").children ==null){
+                                document.getElementById("whatget").appendChild(aul);
+                                aul.appendChild(ali);
+                                ali.appendChild(alia);
+    
+                            }else{
+                                aul.insertBefore(ali,aul.firstChild);
+                                ali.appendChild(alia);
+                            }
+                        }
+                        document.getElementById("whatget").style.display = "block";
+    
+                    }
+                }
+            }
+        }
+    
+    
+    
+    }
+    document.getElementById("input1").onblur = function(){
+        document.getElementById("whatget").style.display = "none";
+        document.getElementById("whatget").innerHTML = "";
+    }
+    
+</script>
+
+</body>
+</html>

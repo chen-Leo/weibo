@@ -11,7 +11,11 @@ import javax.servlet.http.*;
 import java.io.IOException;
 
 import java.util.ArrayList;
-
+/**
+ * 该接口实现搜索相关用户功能
+ *
+ *
+ */
 @WebServlet("/weibo/UserFindServlet")
 public class UserFindServlet extends HttpServlet {
 
@@ -39,11 +43,7 @@ public class UserFindServlet extends HttpServlet {
 
         for (User user: users ) {
             UserJson userJson =  new UserJson();
-            userJson.setPhoto(user.getPhoto());
-            userJson.setName(user.getName());
-            userJson.setWeiboNumber(user.getWeiboNumber());
-            userJson.setAttentions(user.getAttentions());
-            userJson.setFansNumber(user.getFansNumber());
+           userJson.ToUserJson(user,userJson);
             userJsons.add(userJson);
         }
 

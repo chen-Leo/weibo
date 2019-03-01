@@ -11,6 +11,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+
+/**
+ * 该接口用户实现关注功能
+ *
+ *
+ */
+
 @WebServlet("/weibo/AddAttentionsServlet")
 public class AddAttentionsServlet extends HttpServlet {
     LikeUserImpl likeUserImpl;
@@ -31,18 +38,14 @@ public class AddAttentionsServlet extends HttpServlet {
         User user = (User) session.getAttribute("user");
         response.setContentType("text/html;charset=UTF-8");
 
-        if (user == null) {
-            try {
-                response.getWriter().print("您还未登陆，请<a href='/weibo/login.html'>登陆</a>");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        if (isUserNULL(response, user)) return;
 
         String userLikeName = request.getParameter("userLikeName");
+        if(userLikeName ==null) return;
+
 
         try {
-            if (likeUserImpl.addLike("1", userLikeName)) {
+            if (likeUserImpl.addLike(user.getName(), userLikeName)) {
                 response.getWriter().write("成功");
             } else {
                 response.getWriter().write("失败");
@@ -52,6 +55,17 @@ public class AddAttentionsServlet extends HttpServlet {
         }
 
 
+    }
+    static boolean isUserNULL(HttpServletResponse response, User user) {
+        if (user == null) {
+            try {
+                response.getWriter().print("您还未登陆,请登陆");
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
     }
 }
 

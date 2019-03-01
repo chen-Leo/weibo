@@ -18,7 +18,11 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
+/**
+ * 该接口实现搜索相关微博功能
+ *
+ *
+ */
 @WebServlet("/weibo/WeiboFindServlet")
 public class WeiboFindServelt extends HttpServlet {
 
@@ -29,7 +33,7 @@ public class WeiboFindServelt extends HttpServlet {
 
     public void init() {
         weiboContentImpl = new WeiboContentImpl();
-        time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        time = new SimpleDateFormat("yyyy-MM-dd");
         discussImpl = new DiscussImpl();
         likeWeibompl = new LikeWeiboImpl();
     }

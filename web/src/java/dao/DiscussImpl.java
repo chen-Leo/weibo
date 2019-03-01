@@ -1,13 +1,16 @@
 package dao;
 
-        import model.Discuss;
-        import model.DiscussManage;
+import model.Discuss;
+import model.DiscussManage;
 
-        import java.sql.*;
-        import java.text.DateFormat;
-        import java.text.SimpleDateFormat;
-        import java.util.ArrayList;
-        import java.util.List;
+import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+
+
 
 public class DiscussImpl implements DiscussManage {
     //加入一个新的评论表
@@ -103,7 +106,6 @@ public class DiscussImpl implements DiscussManage {
 
     //将评论数组的主要内容(MainDiscuss)转化为String[]格式
     @Override
-
     public String[] mainToString(ArrayList<Discuss> discusses) {
         List<String> list = new ArrayList<>();
         for (Discuss discuss : discusses) {
@@ -113,6 +115,7 @@ public class DiscussImpl implements DiscussManage {
     }
 
     //返回数据库中评论的最大id
+    @Override
     public int weiboIdMAx() {
         boolean flag = false;
         Connection conn = null;
@@ -131,6 +134,7 @@ public class DiscussImpl implements DiscussManage {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        DataConner.close(rs, pst, conn);
         return res;
     }
 }

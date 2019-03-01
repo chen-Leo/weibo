@@ -48,7 +48,7 @@ public class WeiboContentImpl implements WeiboContentManage {
 
     //基于某一用户所发的所有微博基于时间的顺序排序
     @Override
-    public ArrayList<WeiboContent> weiboAll(User user) {
+    public ArrayList<WeiboContent> weiboAll(String userName) {
         boolean flag = false;
         Connection conn = null;
         PreparedStatement pst = null;
@@ -59,9 +59,9 @@ public class WeiboContentImpl implements WeiboContentManage {
         conn = DataConner.getConnection();
 
         try {
-            String sql = "SELECT * FROM weibo_content WHERE weiboUserName = ? ORDER BY disscussTime";
+            String sql = "SELECT * FROM weibo_content WHERE weiboUserName = ? ORDER BY weiboTime";
             pst = conn.prepareStatement(sql);
-            pst.setString(1, user.getName());
+            pst.setString(1, userName);
             rs = pst.executeQuery();
             while (rs.next()) {
                 WeiboContent wbCon = new WeiboContent();
@@ -155,12 +155,13 @@ public class WeiboContentImpl implements WeiboContentManage {
             String sql = "SELECT MAX(weiboId) from weibo_content";
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
-            if (rs.next()) {
+            if ( rs.next()) {
                 res = rs.getInt(1);
             } else res = 0;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        DataConner.close(rs, pst, conn);
         return res;
     }
 
@@ -176,7 +177,7 @@ public class WeiboContentImpl implements WeiboContentManage {
         ArrayList<WeiboContent> weibos = new ArrayList<>();
 
         try {
-            String sql = "SELECT * FROM weibo_content ORDER BY LENGTH(weiboTime) LIMIT 5";
+            String sql = "SELECT * FROM weibo_content ORDER BY weiboTime LIMIT 5";
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
             while (rs.next()) {
@@ -192,6 +193,32 @@ public class WeiboContentImpl implements WeiboContentManage {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        DataConner.close(rs, pst, conn);
         return weibos;
+    }
+
+    //判断该微博是不是用户本人所属
+    public boolean isMaster(String userName, int weiboId) {
+        boolean flag = false;
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+        conn = DataConner.getConnection();
+        int res;
+        try {
+            String sql = "SELECT weiboUserName FROM weibo_content WHERE weiboId = ?";
+            pst = conn.prepareStatement(sql);
+            pst.setInt(1, weiboId);
+            rs = pst.executeQuery();
+            if (rs.next()) {
+                if (userName.equals(rs.getString(1))) {
+                    flag = true;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        DataConner.close(rs, pst, conn);
+        return flag;
     }
 }

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" name="viewport" content="initial-scale=1,maximum-scale=1,minimum-scale=1" >
+    <title>登录注册</title>
+    <link rel="stylesheet" type="text/css" href="css\css4.css" >
+    <!-- <script type="text/javascript">
+        document.documentElement.style.fontSize = document.documentElement.clientWidth / 640*100 +"px";
+    </script> -->
+    
+</head>
+<body>
+    <div id="one" style=" position:absolute; left: 30%;top: 30%; z-index: 1; opacity: 1; transition: all 3s " >
+        账号：<input id="username1" onkeyup="this.value=this.value.replace(/^\s+|\s+$/g,'')" type="text" name="username1"><br/>
+        密码：<input id="password1" onkeyup="this.value=this.value.replace(/^\s+|\s+$/g,'')" type="password" name="password1"><br/>
+        <button class="btn1"  onclick="check()" >登陆</button>
+        <button id="tozhuce" onclick="move()" >点击注册</button>
+    </div>
+    <div id="two" style="position:absolute;  left: 30%;top: 30%; z-index: 0; opacity: 0; transition: all 3s;display: none" >
+        请输入账号：<input id = "username2" onkeyup="this.value=this.value.replace(/^\s+|\s+$/g,'')" type="txet" value="" name="username2"><br/>
+        请输入密码：<input id = "password2" onkeyup="this.value=this.value.replace(/^\s+|\s+$/g,'')" type="password" value="" name="password2" ><br/>
+        再次输入密码：<input id ="password3" onkeyup="this.value=this.value.replace(/^\s+|\s+$/g,'')" type="password" name="password3" value="" ><span id="warn" ></span><br/>
+        <button class = "btn2" onclick="btn2()" type="submit" >提交</button>
+        <button id="return" onclick="back()" >返回登录</button>
+    </div>
+    
+<script type="text/javascript"> // style
+    function move(){
+        document.getElementById("two").style.zIndex+=2;
+        document.getElementById("one").style.opacity = 0;
+        document.getElementById("two").style.opacity = 1;
+        if(document.getElementById("two").style.opacity = 1){
+            document.getElementById("one").style.display = "none";
+            document.getElementById("two").style.display = "inline";
+
+        }
+
+    }
+
+    function back(){
+        document.getElementById("one").style.zIndex+=2;
+        document.getElementById("two").style.opacity = 0;
+        document.getElementById("one").style.opacity = 1;
+        if(document.getElementById("one").style.opacity = 1){
+            document.getElementById("one").style.display = "inline";
+            document.getElementById("two").style.display = "none";
+
+        }
+    }
+</script>
+
+<script type="text/javascript">
+    function check(){
+        if(document.getElementById("username1").value == ""||document.getElementById("username1").value == null){
+            alert("请输入账号");
+            return false;   
+        }else if(document.getElementById("password1").value == ""||document.getElementById("password1").value == null){
+            alert("请输入密码");
+            return false;   
+        }else{
+            // return true;
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("post","/weibo/LoginServlet",true);
+            xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+            xhr.send("username="+document.getElementById("username1").value+"&password="+document.getElementById("password1").value);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("get","/weibo/LoginServlet",true);
+            xhr.send();
+            xhr.onreadystatechange = function(){
+                if(xhr.readyState == 4){
+                    if((xhr.status>=200&&xhr.status<300)||xhr.status ==304){
+                        if(xhr.responseText==="密码错误或用户名不存在"){
+                            alert("密码错误或用户名不存在")
+                            window.location.reload();
+                        }else{
+                            let infor = JSON.parse(xhr.responseText);
+                            localStorage.setItem("name1",infor.name);
+
+                            alert("登陆成功")
+                            self.location.href="personalinfor.html"
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    function btn2(){
+        if(document.getElementById("username2").value == ""||document.getElementById("username2").value == null){
+            alert("还未输入账号");
+            return false;   
+        }else if(document.getElementById("password2").value == ""||document.getElementById("password2").value == null){
+            alert("还未输入密码");
+            return false;   
+        }else if(document.getElementById("password3").value == ""||document.getElementById("password3").value == null){
+            alert("还未输入密码");
+            return false;   
+        }else if(document.getElementById("password2").value !=document.getElementById("password3").value){
+            alert("两次输入密码不一致");
+            return false;   
+        }else{
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("post","/weibo/AddUserServlet",true);
+            xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+            xhr.send("username="+document.getElementById("username2").value+"&password="+document.getElementById("password3").value);
+            
+            var xhr = new XMLHttpRequest();
+            xhr.open("get","/weibo/AddUserServlet",true);
+            xhr.send();
+            xhr.onreadystatechange = function(){
+                if(xhr.readyState == 4){
+                    if((xhr.status>=200&&xhr.status<300)||xhr.status ==304){
+                        if(xhr.responseText==="注册成功"){
+                            alert("注册成功，请登录")
+                            window.location.reload();
+                        }else if(xhr.responseText==="注册失败"){
+                            alert("注册失败")
+                            window.location.reload();
+                        }else if(xhr.responseText==="用户名已经被使用"){
+                            alert("用户名已经被使用")
+                            window.location.reload();
+                        }
+                    }
+                }
+            }
+        }
+    }
+</script>
+
+
+</body>
+</html>

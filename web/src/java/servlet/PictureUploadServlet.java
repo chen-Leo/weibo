@@ -1,23 +1,31 @@
 package servlet;
 
-        import dao.UserImpl;
-        import model.User;
-        import org.apache.commons.fileupload.FileItem;
-        import org.apache.commons.fileupload.FileUploadException;
-        import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-        import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import dao.UserImpl;
+import model.User;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
-        import java.util.UUID;
-        import javax.servlet.ServletException;
-        import javax.servlet.annotation.WebServlet;
-        import javax.servlet.http.HttpServlet;
-        import javax.servlet.http.HttpServletRequest;
-        import javax.servlet.http.HttpServletResponse;
-        import javax.servlet.http.HttpSession;
-        import java.io.File;
-        import java.io.IOException;
+import java.util.UUID;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
 
-        import java.util.List;
+import java.util.List;
+
+/**
+ * 该接口实现图片上传功能
+ *
+ *
+ */
+
+
 
 @WebServlet("/weibo/PictureUploadServlet")
 public class PictureUploadServlet extends HttpServlet {
@@ -41,14 +49,7 @@ public class PictureUploadServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
 
 
-        if (user == null) {
-            try {
-                response.getWriter().print("您还未登陆，请<a href='/weibo/login.html'>登陆</a>");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
+        if (AddAttentionsServlet.isUserNULL(response, user)) return;
 
 
         // 判断是普通表单，还是文件上传表单
@@ -61,7 +62,6 @@ public class PictureUploadServlet extends HttpServlet {
         ServletFileUpload sfu = new ServletFileUpload(factory);   // 文件上传对象
 
 
-
         // 设置解析文件上传中的文件名的编码格式
         sfu.setHeaderEncoding("utf-8");
         // 创建 list容器用来保存 表单中的所有数据信息
@@ -71,7 +71,7 @@ public class PictureUploadServlet extends HttpServlet {
         } catch (FileUploadException e) {
             e.printStackTrace();
         }
-        System.out.println(items.size());
+
         try {
             for (FileItem item : items) {
                 // 处理 文件数据项 信息
@@ -85,11 +85,7 @@ public class PictureUploadServlet extends HttpServlet {
     }
 
 
-    /**
-     * 处理 文件数据项
-     *
-     * @param item
-     */
+
     private boolean handleFileField(FileItem item, String userName) {
         // 获取 文件数据项中的 文件名
         String fileName = item.getName();

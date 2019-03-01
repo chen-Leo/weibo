@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" name="viewport" content="initial-scale=1,maximum-scale=1,minimum-scale=1" >
+    <title>个人信息页</title>
+    <link rel="stylesheet" type="text/css" href="css\css1.css" >
+    <!-- <script type="text/javascript">
+        document.documentElement.style.fontSize = document.documentElement.clientWidth / 640*100 +"px";
+    </script> -->
+</head>
+<body background="css\body_bg_page.jpg"  >
+<div id="top" >
+    <span class="logo" ><img src="css\logo.png" ></span> 
+    <div id="searchsheet" >
+        <input id="input1"  type="text" >
+        <div id="whatget" ></div>
+        <button class="btn1" type="submit">搜索</button>
+    </div>
+    <span class="personalsheet" >
+        <span class="sheetleft" >
+            <span class="left30" ><a id="select1" >主页</a></span>
+            <span id="left31" ><a id="select"></a></span>
+        </span>
+    </span>
+</div>
+<div id="header" >
+    <div class="background" >
+        <img src="css\029.jpg" >
+    </div>
+    <form action="http://localhost:8080//weibo/PictureUploadServlet" method="post" onsubmit="loading()" >
+        <div id="ti" >
+            <img id="user_photo" >
+            <input class="ti"  type="file" name="file" >
+        </div>
+        <input id="btnt" type="submit" value="提交">
+    </form>
+    <div id="touxiang" ></div>
+    <div id="uname" >xisngm</div>
+    <div id="uintroduce" >something</div>
+</div>
+<div id="user-data" >
+    <table class="biaoge" >
+        <tr>
+            <th id="biaoge1" >关注</th>
+            <th id="biaoge2" >粉丝</th>
+            <th id="biaoge3" >微博</th>
+        </tr>
+    </table>
+</div>
+<div id = "personal_profile" >
+    <p>昵称</p><input id = "name" ><button onclick="changedname()">确定</button>
+    <p>个人简介</p><input id="introduce"  ><button onclick="changeintroduce()">确定</button>
+</div>
+<br>
+<div class="send-weibo"><p>输入发送微博内容</p>
+    <textarea id="sending_value" cols="30" rows="10" ></textarea>
+    <button id="sending" >
+        发送
+    </button>
+</div>
+<div id="weibo_content" ></div>
+
+
+<script type="text/javascript">
+    function changedname(){
+        if(document.getElementById("name").value == ""){
+            alert("还未输入昵称哦")
+        }
+        else{
+        // alert(document.getElementById("name").value)
+            var xhr = new XMLHttpRequest();
+            xhr.open("post","/weibo/UserNameChangServlet",true);
+            xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+            xhr.send("name="+document.getElementById("name").value);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("get","/weibo/perStatementUpdateServlet",true);
+            xhr.send;
+            xhr.onreadystatechange = function(){
+                if(xhr.readyState==4){
+                    if((xhr.status>=200&&xhr.status<300)||xhr.status ==304){
+                        if(xhr.responseText == "修改失败"){
+                            alert("修改失败")
+                        }else if(xhr.responseText =="用户名重名"){
+                            alert("用户名重名")
+                        }else if(xhr.responseText.name !==null||xhr.responseText.name !==""){
+                            document.getElementById("uname").innerHTML = xhr.responseText.name;
+                            document.getElementById("left31").innerHTML = xhr.responseText.name;
+                            alert('修改成功')
+                        }
+                    }
+                }
+            }
+
+            document.getElementById("uname").innerHTML = document.getElementById("name").value;
+            document.getElementById("left31").innerHTML = document.getElementById("name").value;
+
+            alert("修改昵称成功")
+        }
+    } //修改昵称
+
+    function changeintroduce(){
+        if(document.getElementById("introduce").value == ""){
+            alert("还未输入签名哦")
+        }
+        else{
+            // alert(document.getElementById("introduce").value)
+            var xhr = new XMLHttpRequest();
+            xhr.open("post","/weibo/perStatementUpdateServlet",true);
+            xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+            xhr.send("personalStatement="+document.getElementById("introduce").value);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("get","/weibo/perStatementUpdateServlet",true);
+            xhr.send();
+            xhr.onreadystatechange = function(){
+                if(xhr.readyState==4){
+                    if((xhr.status>=200&&xhr.status<300)||xhr.status ==304){
+                        if(xhr.responseText == "更新失败"){
+                            alert("更改失败")
+                        }else if(xhr.responseText.personalStatement !==null||xhr.responseText.personalStatement !=="")
+                        {
+                            document.getElementById("uintroduce").innerHTML = xhr.responseText.personalStatement;
+                            alert('修改成功')
+                        }
+                    }
+                }
+            }
+        }
+    } // 修改个人简介
+</script>
+
+<script type="text/javascript" > // 发送微博流程
+    var sendvalue = document.getElementById("sending_value")
+    sending.onclick = function(){
+        //alert(sendvalue.value);
+        if(sendvalue.value == ""&&sendvalue.value == null){
+            alert("写点啥吧");
+        }
+        else{
+        var xhr = new XMLHttpRequest();
+        xhr.open("post","/weibo/AddWeiboServlet",true);  //发送微博内容
+        xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+        xhr.send("mainContent="+sendvalue.value);
+
+
+        let a = document.getElementById("biaoge3").innerHTML;
+        document.getElementById("biaoge3") = a+1;
+        let recieving_weiobo1 = xhr.responseText;
+        let recieving_weiobo = JSON.parse(recieving_weiobo1);
+        // alert(recieving_weiobo);
+
+        let zhengwen = document.createElement("xxx");
+        let pinglunarea = document.createElement("form");
+        pinglunarea.setAttribute("action","weibo/AddDiscussServlet");
+        pinglunarea.setAttribute("method","post");
+        let pingluninput = document.createElement("input");
+        pingluninput.setAttribute("type","text");
+        pingluninput.style.width = "20rem";
+
+        let text = document.createElement("p");
+        text.innerHTML = recieving_weiobo;
+        text.style.display = "inline"
+
+        let delet = document.createElement("button");
+        delet.innerHTML = "删除";
+        delet.setAttribute("onclick","deletee(this)")
+        delet.setAttribute("id",data.weiboContent[b].weiboId+"delete")
+        delet.style.fontSize = "0.1rem";
+        delet.style.textDecoration = "none";
+        delet.style.borderWidth = "0";
+        delet.style.outline = "none";
+        delet.style.cursor = "pointer";
+        delet.style.backgroundColor = "rgba(0,0,0,0)";
+
+        let whophooto = document.createElement("img");
+        whophooto.setAttribute("src",data.photo);
+        whophooto.style.width = "3rem";
+        whophooto.style.height = "3rem";
+        whophooto.setAttribute("onclick","toother(this)");
+        whophooto.setAttribute("id",data.weiboContent[b].weiboId+"link");
+        whophooto.setAttribute("name",data.weiboContent[b].weiboUserName);
+
+        let fenhang = document.createElement("br");
+
+        let collect = document.createElement("button");
+        collect.setAttribute("id",b+"shoucang");
+        collect.innerHTML = "收藏";
+        collect.setAttribute("onclick","shoucang(this)");
+        collect.style.display = "inline";
+        collect.style.color = "black";
+        collect.style.backgroundColor = "#dbc639";
+
+        let shijian = document.createElement("p");
+        shijian.setAttribute("id","sendingtime");
+        shijian.style.fontSize = "0.5rem";
+        shijian.innerHTML = recieving_weiobo.weiboTime;
+
+        let sendingweibotime = document.createElement("p");
+        sendingweibotime.setAttribute("id","sendingtime");
+        sendingweibotime.style.fontSize = "0.5rem";
+        sendingweibotime.innerHTML = recieving_weiobo;
+
+        let zan = document.createElement("button");
+        zan.setAttribute("id",recieving_weiobo.weiboId+"zan");
+        zan.setAttribute("onclick","dianzan(this)")
+        zan.innerHTML = "赞";
+        zan.style.color = "white";
+        zan.style.fontSize = "1rem";
+        zan.style.outline = "none";
+        zan.style.borderRadius = "0.1rem";
+        zan.style.cursor = "pointer";
+        zan.style.background = "#5599FF";
+        zan.style.borderWidth = "0";
+
+        let subbtn = document.createElement("input");
+        subbtn.setAttribute("type","button");
+        subbtn.setAttribute("value","发表");
+        subbtn.setAttribute("onclick","sendingpinglun(this)");
+        subbtn.setAttribute("id",recieving_weiobo.weiboId);
+        pinglunarea.setAttribute("id",recieving_weiobo.weiboId+"carea");
+        zhengwen.setAttribute("id","main");
+        zhengwen.setAttribute("attr",recieving_weiobo.weiboId);
+        addone.setAttribute("id","every");
+
+        var kids = weibo_content.children ;
+        if (kids.length == null)
+        {
+            weibo_content.appendChild(addone);
+            zhengwen.appendChild(whophooto);
+            zhengwen.appendChild(fenhang);
+            zhengwen.appendChild(text);
+            zhengwen.appendChild(shijian);
+            zhengwen.appendChild(zan);
+            zhengwen.appendChild(delet);
+            zhengwen.appendChild(collect);
+            zhengwen.appendChild(pinglunarea);
+            pinglunarea.appendChild(pingluninput);
+            pinglunarea.appendChild(subbtn);
+        }
+        else
+        {
+            weibo_content.insertBefore(addone,weibo_content.firstChild);
+            zhengwen.appendChild(whophooto);
+            zhengwen.appendChild(fenhang);
+            zhengwen.appendChild(text);
+            zhengwen.appendChild(zan);
+            zhengwen.appendChild(delet);
+            zhengwen.appendChild(collect);
+            zhengwen.appendChild(shijian);
+            zhengwen.appendChild(pinglunarea);
+            pinglunarea.appendChild(pingluninput);
+            zhengwen.appendChild(subbtn);
+        }
+        sendvalue.value = "";
+        alert("发送微博成功")
+        }
+
+        
+    }
+</script>
+
+
+<script type="text/javascript" >
+    if(localStorage.getItem("name1")==""||localStorage.getItem("name1")==null){
+        alert("注册或登录后才可以使用");
+        self.location = "login&register.html";
+    }else{
+    var xhr = new XMLHttpRequest();
+    xhr.open("get","http://localhost:8080//weibo/WeiboRecentServlet",true);
+    xhr.send();
+    xhr.onreadystatechange = function () {
+        if(xhr.readyState==4){
+            if((xhr.status>=200&&xhr.status<300)||xhr.status ==304){
+                let shuju = xhr.responseText;
+                let data = JSON.parse(shuju);
+                var userphoto = document.getElementById("user_photo");
+                if(data.photo!==null){
+                    document.getElementById("user_photo").setAttribute("src",data.photo);
+                }
+                var number1 = document.createElement("p");
+                number1.innerHTML = data.attentions;
+                biaoge1.appendChild(number1);
+                var number2 = document.createElement("p");
+                number2.innerHTML = data.fansNumber;
+                biaoge2.appendChild(number2);
+                var number3 = document.createElement("p");
+                number3.innerHTML = data.weiboNumber;
+                biaoge3.appendChild(number3);
+                var allweibonumber = data.weiboContent;
+                var i = allweibonumber.length;
+                for( b=0 ; b<i ; b++ ){
+                    let recieving_weiobo = allweibonumber[b].weiboMain;
+                    let addone = document.createElement("div");
+                    let zhengwen = document.createElement("xxx");
+                    let pinglunarea = document.createElement("form");
+                    pinglunarea.setAttribute("action","http://localhost:8080//weibo/AddDiscussServlet");
+                    pinglunarea.setAttribute("method","post");
+                    let pingluninput = document.createElement("input");
+                    pingluninput.setAttribute("type","text");
+                    pingluninput.style.width = "20rem";
+
+                    let text = document.createElement("p");
+                    text.innerHTML = recieving_weiobo;
+                    text.style.display = "inline";
+
+                    let delet = document.createElement("button");
+                    delet.innerHTML = "删除";
+                    delet.setAttribute("onclick","deletee(this)")
+                    delet.setAttribute("id",data.weiboContent[b].weiboId+"delete")
+                    delet.style.fontSize = "0.1rem";
+                    delet.style.textDecoration = "none";
+                    delet.style.borderWidth = "0";
+                    delet.style.outline = "none";
+                    delet.style.cursor = "pointer";
+                    delet.style.backgroundColor = "rgba(0,0,0,0)";
+
+                    let send_photo1 = document.createElement("xx");
+                    send_photo1.style.display = "block";
+                    send_photo1.style.width = "15rem";
+                    send_photo1.style.height = "15rem";
+                    let send_photo2 = document.createElement("img");
+                    send_photo1.setAttribute("id",data.weiboContent[b].weiboId+"expend");
+                    send_photo2.setAttribute("onclick","expending(this)");
+                    send_photo2.setAttribute("id",data.weiboContent[b].weiboId+"img");
+                    send_photo2.setAttribute("src","css/010.jpg");
+                    send_photo2.style.maxHeight = "100%";
+                    send_photo2.style.maxWidth = "100%";
+
+                    let whophooto = document.createElement("img");
+                    whophooto.setAttribute("src",data.photo);
+                    whophooto.style.width = "3rem";
+                    whophooto.style.height = "3rem";
+                    whophooto.setAttribute("onclick","toother(this)");
+                    whophooto.setAttribute("id",data.weiboContent[b].weiboId+"link");
+                    whophooto.setAttribute("name",data.weiboContent[b].weiboUserName);
+
+                    let fenhang = document.createElement("br");
+
+                    let collect = document.createElement("button");
+                    collect.setAttribute("id",b+"shoucang");
+                    collect.innerHTML = "收藏";
+                    collect.setAttribute("onclick","shoucang(this)");
+                    collect.style.display = "inline";
+                    collect.style.color = "black";
+                    collect.style.fontSize = "0.8rem";
+                    collect.style.width  = "2.6rem";
+                    collect.style.outline = "none";
+                    collect.style.borderRadius = "0.1rem";
+                    collect.style.cursor = "pointer";
+                    collect.style.paddingLeft = "-0.2rem";
+                    collect.style.paddingRight = "-0.2rem";
+                    collect.style.backgroundColor = "#dbc639";
+                    collect.style.borderWidth = "0";
+
+                    let shijian = document.createElement("p");
+                    shijian.setAttribute("id","sendingtime");
+                    shijian.style.fontSize = "0.5rem";
+                    shijian.innerHTML = data.weiboContent[b].weiboTime;
+
+                    let zan = document.createElement("button");
+                    zan.setAttribute("id",b+"zan");
+                    zan.setAttribute("onclick","dianzan(this)");
+                    zan.innerHTML = data.weiboContent[b].weiboLIkes+"赞";
+                    for(l=0;l<data.weiboContent.length;l++){
+                        if(data.weiboContent[l].isLike ===1){
+                            zan.style.color = "red";
+                        }else{
+                            zan.style.color = "white"
+                        }
+                    }
+                    zan.style.fontSize = "1rem";
+                    zan.style.outline = "none";
+                    zan.style.borderRadius = "0.1rem";
+                    zan.style.cursor = "pointer";
+                    zan.style.background = "#5599FF";
+                    zan.style.borderWidth = "0";
+
+                    let subbtn = document.createElement("input");
+                    subbtn.setAttribute("type","button");
+                    subbtn.setAttribute("value","发表");
+                    subbtn.setAttribute("onclick","sendingpinglun(this)");
+                    subbtn.setAttribute("id",data.weiboContent[b].weiboId);
+                    pinglunarea.setAttribute("id",data.weiboContent[b].weiboId+"carea");
+                    zhengwen.setAttribute("id","main");
+                    zhengwen.setAttribute("attr",data.weiboContent[b].weiboId);
+                    addone.setAttribute("id","every");
+                    let kids = weibo_content.children ;
+                    if (kids.length == null)
+                    {
+                        weibo_content.appendChild(zhengwen);
+                        zhengwen.appendChild(whophooto);
+                        zhengwen.appendChild(fenhang);
+                        zhengwen.appendChild(text);
+                        zhengwen.appendChild(shijian);
+                        zhengwen.appendChild(zan);
+                        zhengwen.appendChild(delet);
+                        zhengwen.appendChild(send_photo1);
+                        send_photo1.appendChild(send_photo2);
+                        zhengwen.appendChild(collect);
+                        zhengwen.appendChild(pinglunarea);
+                        pinglunarea.appendChild(pingluninput);
+                        pinglunarea.appendChild(subbtn);
+                    }
+                    else
+                    {
+                        weibo_content.insertBefore(zhengwen,weibo_content.firstChild);
+                        zhengwen.appendChild(whophooto);
+                        zhengwen.appendChild(fenhang);
+                        zhengwen.appendChild(text);
+                        zhengwen.appendChild(shijian);
+                        zhengwen.appendChild(zan);
+                        zhengwen.appendChild(delet);
+                        zhengwen.appendChild(send_photo1);
+                        send_photo1.appendChild(send_photo2);
+                        zhengwen.appendChild(collect);
+                        zhengwen.appendChild(pinglunarea);
+                        pinglunarea.appendChild(pingluninput);
+                        zhengwen.appendChild(subbtn);
+                    }
+                    document.getElementById("main").style.fontSize = "1.5rem";
+                    document.getElementById("main").style.marginBottom = "5rem";
+                    for(k=0;k<data.weiboContent[b].weiboComent.length;k++){
+                        let pinglun = document.createElement("p");
+                        pinglun.innerHTML = data.weiboContent[b].weiboComent[k];
+                        pinglun.style.fontSize = "1rem";
+                        zhengwen.appendChild(pinglun);
+                        
+                    }
+                }
+                }
+            }
+        }
+}
+
+</script>
+
+<script type="text/javascript" > // 接受头像URL
+    btnt.onclick = function(){
+        var xhr = new XMLHttpRequest();
+        xhr.open("get","/weibo/PictureUploadServlet",true);
+        xhr.send();
+        xhr.onreadystatechange = function(){
+            document.getElementById("user_photo").setAttribute("src",touxiang);
+        }
+    }
+</script>
+
+<script type="text/javascript"> // 发送评论
+    function sendingpinglun(obj){
+        var xhr = new XMLHttpRequest();
+        xhr.open("post","http://localhost:8080//weibo/AddDiscussServlet",true);
+        xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+        xhr.send("weiboId="+obj.id);
+
+
+        let pinglun = document.createElement("p");
+        pinglun.innerHTML = data ;
+        pinglun.style.fontSize = "1rem";
+        let parent = document.getElementById(obj.id).parentNode;
+        if(parent.lastChild == parent.children[3]){
+            parent.appendChild(pinglun)
+        }
+        else
+        {
+            parent.insertBefore(pinglun,parent.children[4])
+        }
+
+    }
+</script>
+<script type="text/javascript" > // 点赞
+    function dianzan(obj){
+        var g1 = parseInt(obj.id)
+        var xhr = new XMLHttpRequest();
+        xhr.open("post","/weibo/AddLikeServlet",true);
+        xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+        xhr.send(g1);
+
+        xhr.open("get","/weibo/AddLikeServlet",true);
+        xhr.send();
+        xhr.onreadystatechange =function(){
+            if(xhr.readyState==4){
+                if((xhr.status>=200&&xhr.status<300)||xhr.status ==304){
+                    if(xhr.responseText=="成功"){
+                        aler("点赞成功")
+                        if(document.getElementById(obj.id).style.color == "white" ){
+                            if(parseInt(document.getElementById(obj.id).innerHTML == NaN)){
+                                let t = 0;
+                                t++;
+                                document.getElementById(obj.id).style.color = "red";
+                                document.getElementById(obj.id).innerHTML = t+"赞";
+                            }
+                            else{
+                                let t = parseInt(document.getElementById(obj.id).innerHTML);
+                                t++;
+                                document.getElementById(obj.id).style.color = "red";
+                                document.getElementById(obj.id).innerHTML = t+"赞";
+
+                            }
+                        }else{
+                            let t = parseInt(document.getElementById(obj.id).innerHTML);
+                            t--;
+                            document.getElementById(obj.id).style.color = "white";
+                            document.getElementById(obj.id).innerHTML = t+"赞";
+                            }
+                    }else{
+                        alert("点赞失败")
+                    }
+                }
+            }
+        }
+            
+    }
+</script>
+
+<script type="text/javascript">
+    function deletee(obj){
+        var sc = confirm("确定删除此篇微博吗？");
+        if(sc==true){
+            var xhr = new XMLHttpRequest;
+            xhr.open("post","/weibo/DelectWeiboServelt",true);
+            xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+            xhr.send("weiboId="+obj.id);
+
+            xhr.open("get","/weibo/DelectWeiboServelt",true);
+            xhr.send();
+            xhr.onreadystatechange = function (){
+                if(xhr.readyState ==4){
+                    if((xhr.status>=200&&xhr.status<300)||xhr.status==304){
+                        if(xhr.responseText == "删除成功"){
+                            document.getElementById(obj.id).parentNode.parentNode.removeChild(document.getElementById(obj.id).parentNode);
+                            alert("删除成功")
+                        }
+                    }
+                }
+            }
+        }else {
+            alert("删除失败")
+        }
+    }
+</script>
+
+<script type="text/javascript">
+
+document.getElementById("input1").oninput = function(){
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("post","/weibo/UserFindServlet",true);
+    xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+    xhr.send("username="+document.getElementById("input1").value);
+
+    xhr.open("get","/weibo/UserFindServlet",true);
+    xhr.send();
+    xhr.onreadystatechange = function(){
+        if(xhr.readyState==4){
+            if((xhr.status>=200&&xhr.status<300)||xhr.status==304){
+                if(xhr.responseText!=""||xhr.responseText!=null){
+                    let result = JSON.parse(xhr.responseText);
+    var result = [
+    {
+        "fansNumber": 0,
+        "attentions": 0,
+        "name": "563597531",
+        "photo": "/files/7e21e2bc-77d4-4928-aa0e-50c98fa87848_屏幕截图(11).png",
+        "weiboNumber": 0
+    },
+    {
+        "fansNumber": 0,
+        "attentions": 0,
+        "name": "5635975311",
+        "photo": "",
+        "weiboNumber": 0
+    }
+] 
+                    let aul = document.createElement("ul");
+                    let ali = document.createElement("li");
+                    let alia = document.createElement("a");
+                    ali.setAttribute("type","none");
+
+                    for(o=0;0<result.length;o++){
+                        alia.innerHTML = result[o].name;
+                        if(document.getElementById("whatget").children ==null){
+                            document.getElementById("whatget").appendChild(aul);
+                            aul.appendChild(ali);
+                            ali.appendChild(alia);
+
+                        }else{
+                            aul.insertBefore(ali,aul.firstChild);
+                            ali.appendChild(alia);
+                        }
+                    }
+                    document.getElementById("whatget").style.display = "block";
+
+                }
+            }
+        }
+    }
+
+
+
+}
+document.getElementById("input1").onblur = function(){
+    document.getElementById("whatget").style.display = "none";
+        document.getElementById("whatget").innerHTML = "";
+}
+
+</script>
+
+
+<script type="text/javascript" >
+
+    function toother(obj){
+            localStorage.setItem = "name2="+document.getElementById(obj.id).getAttribute("name");
+            alert(localStorage.setItem)
+            slef.location = "others.html";
+        }
+    
+    </script>
+
+</body>
+</html>

@@ -1,6 +1,7 @@
 package servlet;
 
 import dao.WeiboContentImpl;
+import model.Encrypt;
 import model.User;
 
 import javax.servlet.ServletException;
@@ -10,7 +11,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-@WebServlet("/weibo/DelectWeiboServelt")
+/**
+ * 该接口实现删微博功能
+ *
+ *
+ */
+@WebServlet("/weibo/DelectWeiboServlet")
 public class DelectWeiboServelt extends HttpServlet {
 
     WeiboContentImpl weiboContentImpl;
@@ -27,20 +33,31 @@ public class DelectWeiboServelt extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) {
 
+
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         response.setContentType("text/html;charset=UTF-8");
+
+
+        if (AddAttentionsServlet.isUserNULL(response, user)) return;
         int weiboId = Integer.parseInt(request.getParameter("weiboId"));
 
-        if (user == null) {
-            try {
-                response.getWriter().print("您还未登陆，请<a href='/weibo/login.html'>登陆</a>");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
         try {
+            if(request.getParameter("weiboId") == null){
+                response.getWriter().write("非法输入");
+                return;
+            }
+
+            if (!Encrypt.isRight(request.getParameter("weiboId")) ) {
+                response.getWriter().write("非法输入");
+                return;
+            }
+
+            //判断是否删的是本人的微博
+            if (!weiboContentImpl.isMaster(user.getName(), weiboId)) {
+                response.getWriter().write("删除失败,你没有权限");
+                return;
+            }
             if (weiboContentImpl.delete(weiboId)) {
                 response.getWriter().write("删除成功");
             } else {
@@ -49,6 +66,5 @@ public class DelectWeiboServelt extends HttpServlet {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }

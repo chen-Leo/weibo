@@ -1,6 +1,7 @@
 package servlet;
 
 import dao.UserImpl;
+import model.Encrypt;
 import model.User;
 import model.toJson.UserJson;
 import net.sf.json.JSONObject;
@@ -10,6 +11,13 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+
+/**
+ * 该接口实现登陆功能
+ *
+ *
+ */
+
 
 @WebServlet("/weibo/LoginServlet")
 public class LoginServlet extends HttpServlet {
@@ -31,16 +39,26 @@ public class LoginServlet extends HttpServlet {
         String password = request.getParameter("password");
         response.setContentType("text/html;charset=UTF-8");
 
-        //编码转换，支持中文
+
+
         try {
+
+            if(userName==null|| password==null){
+                response.getWriter().write("请勿空输入");
+                return;
+            }
+            if (!Encrypt.StringFilter(password) ) {
+                response.getWriter().write("非法输入");
+                return;
+            }
+            if (!Encrypt.isRight(userName)  ) {
+                response.getWriter().write("非法输入");
+                return;
+            }
+            //编码转换，支持中文
             userName = new String(userName.getBytes("ISO-8859-1"), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
 
-        try {
             if (userImpl.checkLogin(userName, password)) {
-
                 User user = userImpl.userMessage(userName);
                 HttpSession session = request.getSession();
                 session.setMaxInactiveInterval(15 * 60);//设置有效期为15分钟
@@ -49,13 +67,8 @@ public class LoginServlet extends HttpServlet {
 
                 //构建一个返回的用户json格式
                 UserJson userJson = new UserJson();
-                userJson.setPhoto(user.getPhoto());
-                userJson.setName(user.getName());
-                userJson.setAttentions(user.getAttentions());
-                userJson.setFansNumber(user.getFansNumber());
-                userJson.setWeiboNumber(user.getWeiboNumber());
+                userJson.ToUserJson(user,userJson);
                 JSONObject returnUser = JSONObject.fromObject(userJson);
-
                 response.getWriter().write(returnUser.toString());
 
             } else response.getWriter().write("密码错误或用户名不存在");

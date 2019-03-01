@@ -1,0 +1,70 @@
+/* #main{
+    position: absolute;
+    left: 10rem;
+} */
+*{
+    padding: 0;
+}
+#tozhuce{
+    cursor: pointer;
+    border-width: 0;
+    background-color: #00d32e;
+    font-size: 1.3rem;
+    border-color: red;
+}
+.btn1 {
+    cursor: pointer;
+    background-color: #ffc641;
+    border-width: 0;
+    font-size: 1.3rem;
+    border-color: red;
+}
+#return{
+    cursor: pointer;
+    background-color: #e361cd;
+    border-width: 0;
+    font-size: 1.3rem;
+    border-color: red;
+}
+.btn2{
+    cursor: pointer;
+    background-color: #ffc641;
+    border-width: 0;
+    font-size: 1.3rem;
+    border-color: red;
+}
+#username1{
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: solid;
+    outline: none;
+}
+#password1{
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: solid;
+    outline: none;
+}
+#username2{
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: solid;
+    outline: none;
+}
+#password2{
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: solid;
+    outline: none;
+}
+#password3{
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: solid;
+    outline: none;
+}
