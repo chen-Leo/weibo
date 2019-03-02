@@ -54,11 +54,12 @@ public class DiscussImpl implements DiscussManage {
         Connection conn = null;
         PreparedStatement pst = null;
         ResultSet rs = null;
-        Discuss dis = new Discuss();
+        
         ArrayList<Discuss> discusses = new ArrayList<>();
         conn = DataConner.getConnection();
 
         try {
+            Discuss dis = new Discuss();
             String sql = "SELECT * FROM discuss WHERE weiboId = ? ORDER BY discussTime";
             pst = conn.prepareStatement(sql);
             pst.setInt(1, weiboId);
