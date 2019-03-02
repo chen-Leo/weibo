@@ -44,6 +44,13 @@ public class AddWeiboServlet extends HttpServlet {
         if (AddAttentionsServlet.isUserNULL(response, user)) return;
         if (mainContent == null) return;
 
+        try {
+            mainContent = new String(mainContent.getBytes("ISO-8859-1"), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        
+        
         Date date = new Date();//获取系统当前时间
         WeiboContent weiboContent = new WeiboContent(weiboContentImpl.weiboIdMAx() + 1, 0, null, mainContent, user.getName(), new java.sql.Date(date.getTime()));
 
